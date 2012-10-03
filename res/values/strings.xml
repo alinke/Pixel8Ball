@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, CameraToMatrixActivity!</string>
+    <string name="app_name">Pixel 8 Ball</string>
+    
+    <string name="rrated">PG-13 Mode</string>
+    <string name="rratedSummary">Adds an extra PG-13 Eightball Response</string>
+    <string name="pref_r">pref_r</string>
+    
+    <string name="menu_about_title">About</string> 
+    <string name="menu_about_summary">More info at http://droidalyzer.com/ioiomatrix.html\n\nDesigned by Open Gadgets LLC</string>
+     <string name="versionString">Version</string> 
+   
+   
+    <string name="prefTitle">Eightball Settings</string>
+    <string name="menu_prefs_title">Settings</string>
+    <string name="prefSummary">Eightball Settings</string>
+  
+   <string name="OKText">OK</string>   
+   
+    <string name="selected_matrix">selected_matrix</string>
+    <string name="matrix">LED Matrix Selection</string>
+    <string name="matrixSummary">Select your RGB LED Matrix model</string>    
+    <string name="dialogTitleMatrix">LED Matrix Selection</string>
+    <string name="matrix_default_value">0</string>
+   
+    
+    <string name="bluetooth_pair">Blueooth Pairing</string>
+    <string name="bluetooth_pairSummary">Shortcut to the Bluetooth settings screen. Pair to IOIO using code: 4545</string>
+    
+    
+   
+</resources>

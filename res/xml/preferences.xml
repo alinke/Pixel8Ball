@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This file is /res/xml/mypreferences.xml -->
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="flight_option_preference"
+    android:title="@string/prefTitle"
+    android:summary="@string/prefSummary">
+ 
+  
+   <PreferenceScreen 
+    android:title="@string/bluetooth_pair"
+    android:summary="@string/bluetooth_pairSummary">
+   <intent android:action="android.settings.BLUETOOTH_SETTINGS">
+   </intent>
+   </PreferenceScreen>
+    
+    <CheckBoxPreference
+    android:title="@string/rrated"
+    android:key="pref_r"
+    android:summary="@string/rratedSummary"/>
+   
+    <ListPreference
+    android:key="@string/selected_matrix"
+    android:title="@string/matrix"
+    android:summary="@string/matrixSummary"
+    android:entries="@array/matrix_options"
+    android:entryValues="@array/matrix_values"
+    android:dialogTitle="@string/dialogTitleMatrix"
+    android:defaultValue="@string/matrix_default_value" />
+     
+   </PreferenceScreen>
