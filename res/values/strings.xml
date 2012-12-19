@@ -3,8 +3,8 @@
     <string name="hello">Hello World, CameraToMatrixActivity!</string>
     <string name="app_name">Pixel 8 Ball</string>
     
-    <string name="rrated">PG-13 Mode</string>
-    <string name="rratedSummary">Adds an extra PG-13 Eightball Response</string>
+    <string name="rrated">Rated R Mode</string>
+    <string name="rratedSummary">Adds an extra Rated R Response</string>
     <string name="pref_r">pref_r</string>
     
     <string name="menu_about_title">About</string> 
@@ -23,6 +23,12 @@
     <string name="matrixSummary">Select your RGB LED Matrix model</string>    
     <string name="dialogTitleMatrix">LED Matrix Selection</string>
     <string name="matrix_default_value">0</string>
+    
+    <string name="debugMode">Debug Mode</string>    
+    <string name="pref_debugMode">pref_debugMode</string>
+    <string name="pref_debugModeDefault">false</string>    
+    <string name="debugModeSummary">Displays debug messages, use to see how often the Bluetooth connections are getting disconnected and connected as well as other debug messages</string>
+    
    
     
     <string name="bluetooth_pair">Blueooth Pairing</string>

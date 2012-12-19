@@ -117,8 +117,10 @@ public final class R {
     public static final class string {
         public static final int OKText=0x7f07000b;
         public static final int app_name=0x7f070001;
-        public static final int bluetooth_pair=0x7f070011;
-        public static final int bluetooth_pairSummary=0x7f070012;
+        public static final int bluetooth_pair=0x7f070015;
+        public static final int bluetooth_pairSummary=0x7f070016;
+        public static final int debugMode=0x7f070011;
+        public static final int debugModeSummary=0x7f070014;
         public static final int dialogTitleMatrix=0x7f07000f;
         public static final int hello=0x7f070000;
         public static final int matrix=0x7f07000d;
@@ -129,6 +131,8 @@ public final class R {
         public static final int menu_prefs_title=0x7f070009;
         public static final int prefSummary=0x7f07000a;
         public static final int prefTitle=0x7f070008;
+        public static final int pref_debugMode=0x7f070012;
+        public static final int pref_debugModeDefault=0x7f070013;
         public static final int pref_r=0x7f070004;
         public static final int rrated=0x7f070002;
         public static final int rratedSummary=0x7f070003;

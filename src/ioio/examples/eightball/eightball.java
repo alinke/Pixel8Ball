@@ -101,7 +101,7 @@ import android.os.Message;
 
 @SuppressLint("ParserError")
 public class eightball extends IOIOActivity {
-	private static final String TAG = "Eightball";	
+	private static final String LOG_TAG = "PixelEightball";	
 	private RgbLedMatrix.Matrix KIND; 
 	private short[] frame_;
 	
@@ -134,10 +134,10 @@ public class eightball extends IOIOActivity {
 	
 	private int deviceFound = 0;
 	private int random = 0;
-	private final String tag = "Eightball";
 	private int matrix_model;
-
-	
+	private boolean debug_;
+    private int appAlreadyStarted = 0;
+    private ioio.lib.api.RgbLedMatrix matrix_;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -161,7 +161,7 @@ public class eightball extends IOIOActivity {
 	        }
 	        catch (NameNotFoundException e)
 	        {
-	            Log.v(tag, e.getMessage());
+	            Log.v(LOG_TAG, e.getMessage());
 	        }
 	        
 	        //******** preferences code
@@ -169,7 +169,6 @@ public class eightball extends IOIOActivity {
 	        setPreferences();
 	        //***************************
 	        
-	   
 		 
 		 playIntro();
 		// loadImage();
@@ -465,6 +464,13 @@ public class eightball extends IOIOActivity {
 	}
 		    
 			 loadImage();
+			 try {
+				matrix_.frame(frame_);
+			} catch (ConnectionLostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} //writes whatever is in bitmap raw 565 file buffer to the RGB LCD
+				
 			 resetTimer.start(); //wait four seconds and clear
 					
 			}
@@ -476,24 +482,7 @@ public class eightball extends IOIOActivity {
 		}
 	}	
 	
-	//public void loadImage() {		 
-		
-		 
-			//try {
-			//	BitmapInputStream.read(BitmapBytes,0,BitmapBytes.length); //reads the input stream into a byte array
-			//} catch (IOException e2) {
-				// TODO Auto-generated catch block
-			//	e2.printStackTrace();
-		//	}  
-			
-		 		
-		 //	int y = 0;
-		 		//for (int i = 0; i < frame_.length; i++) {
-		 		//	frame_[i] = (short) (((short) BitmapBytes[y]& 0xFF) | (((short) BitmapBytes[y+1]& 0xFF) << 8));
-		 		//	y = y + 2;
-		 	//}
-		
-//	}
+	
 	
 	public void loadImage() {
 		try {
@@ -524,8 +513,6 @@ public class eightball extends IOIOActivity {
 	    {
 	       MenuInflater inflater = getMenuInflater();
 	       inflater.inflate(R.menu.mainmenu, menu);
-	      
-
 	       return true;
 	    }
 
@@ -548,10 +535,7 @@ public class eightball extends IOIOActivity {
 	           				ioio.examples.eightball.preferences.class);
 	       
 	           this.startActivityForResult(intent, 0);
-	       }
-	    	
-	    	 	
-	              
+	       }  
 	       return true;
 	    }
 	
@@ -573,6 +557,8 @@ public class eightball extends IOIOActivity {
 	    	        resources.getString(R.string.selected_matrix),
 	    	        resources.getString(R.string.matrix_default_value))); 
 	     
+	     debug_ = prefs.getBoolean("pref_debugMode", false);
+	     
 	     switch (matrix_model) {  //get this from the preferences
 	     
 	     case 0:
@@ -584,34 +570,17 @@ public class eightball extends IOIOActivity {
 	    	 BitmapInputStream = getResources().openRawResource(R.raw.eightball2);
 	    	 break;
 	     case 2:
-	    	 KIND = Matrix.SEEEDSTUDIO_32x32; //v1
+	    	 KIND = Matrix.SEEEDSTUDIO_32x32_NEW; //v1
 	    	 BitmapInputStream = getResources().openRawResource(R.raw.eightball2a);
 	    	 break;
 	     case 3:
-	    	 KIND = Matrix.SEEEDSTUDIO_32x32_NEW; //v2
+	    	 KIND = Matrix.SEEEDSTUDIO_32x32; //v2
 	    	 BitmapInputStream = getResources().openRawResource(R.raw.eightball2a);
 	    	 break;
 	     default:	    		 
-	    	 KIND = Matrix.SEEEDSTUDIO_32x32_NEW; //v2 as the default
+	    	 KIND = Matrix.SEEEDSTUDIO_32x32; //v2 as the default
 	    	 BitmapInputStream = getResources().openRawResource(R.raw.eightball2a);
 	     }
-	     
-	    // case 0:
-	    	// KIND = Matrix.SEEEDSTUDIO_32x32;
-	    	// BitmapInputStream = getResources().openRawResource(R.raw.eightball2a);	
-	    	// break;
-	    // case 1:
-	    	// KIND = Matrix.SEEEDSTUDIO_32x16;
-	    	// BitmapInputStream = getResources().openRawResource(R.raw.eightball2);	
-	    	// break;
-	   //  case 2:
-	    	// KIND = Matrix.ADAFRUIT_32x16;
-	    	// BitmapInputStream = getResources().openRawResource(R.raw.eightball2);	
-	    	// break;
-	   //  default:	    		 
-	    	// KIND = Matrix.SEEEDSTUDIO_32x32;
-	    	// BitmapInputStream = getResources().openRawResource(R.raw.eightball2a);	
-	     //}
 	     
 	     frame_ = new short [KIND.width * KIND.height];
 		 BitmapBytes = new byte[KIND.width * KIND.height *2]; //512 * 2 = 1024 or 1024 * 2 = 2048
@@ -639,6 +608,13 @@ public class eightball extends IOIOActivity {
 				}
 				
 				 loadImage();	
+				 try {
+					matrix_.frame(frame_);
+				} catch (ConnectionLostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} //writes whatever is in bitmap raw 565 file buffer to the RGB LCD
+					
 				 playIntro();
 				 readyFlag = 1;
 				}
@@ -719,21 +695,51 @@ public class eightball extends IOIOActivity {
 }
 
 	class IOIOThread extends BaseIOIOLooper {
-		private RgbLedMatrix matrix_;
+		//private RgbLedMatrix matrix_;
 
 		@Override
 		protected void setup() throws ConnectionLostException {
 			matrix_ = ioio_.openRgbLedMatrix(KIND);
 			deviceFound = 1; //if we went here, then we are connected over bluetooth or USB
 			connectTimer.cancel(); //we can stop this since it was found
+			
+			matrix_.frame(frame_);  //write eightball image to the matrix
+  			
+  			if (debug_ == true) {  			
+	  			showToast("Bluetooth Connected");
+  			}
+  			
+  			//if (appAlreadyStarted == 1) {  //this means we were already running and had a IOIO disconnect so show let's show what was in the matrix
+  				//WriteImagetoMatrix();
+  			//}
+  			
+  			appAlreadyStarted = 1; 
 		}
 
 		@Override
 		public void loop() throws ConnectionLostException {
 		
-			matrix_.frame(frame_); //writes whatever is in bitmap raw 565 file buffer to the RGB LCD
+			//matrix_.frame(frame_); //writes whatever is in bitmap raw 565 file buffer to the RGB LCD
 					
 			}	
+		
+		@Override
+		public void disconnected() {
+			Log.i(LOG_TAG, "IOIO disconnected");
+			if (debug_ == true) {  			
+	  			showToast("Bluetooth Disconnected");
+  			}		
+		}
+
+		@Override
+		public void incompatible() {  //if the wrong firmware is there
+			//AlertDialog.Builder alert=new AlertDialog.Builder(context); //causing a crash
+			//alert.setTitle(getResources().getString(R.string.notFoundString)).setIcon(R.drawable.icon).setMessage(getResources().getString(R.string.bluetoothPairingString)).setNeutralButton(getResources().getString(R.string.OKText), null).show();	
+			showToast("Incompatbile firmware!");
+			showToast("This app won't work until you flash the IOIO with the correct firmware!");
+			showToast("You can use the IOIO Manager Android app to flash the correct firmware");
+			Log.e(LOG_TAG, "Incompatbile firmware!");
+		}
 		}
 
 	@Override
@@ -742,8 +748,8 @@ public class eightball extends IOIOActivity {
 	}
 	
 	@Override
-    public void onDestroy() {
-    	
+    public void onPause() {
+		super.onPause();
 		 switch (matrix_model) {  //get this from the preferences
 	     case 0:
 	    	 BitmapInputStream = getResources().openRawResource(R.raw.blank16);	
@@ -761,27 +767,42 @@ public class eightball extends IOIOActivity {
 	    	 BitmapInputStream = getResources().openRawResource(R.raw.blank32);	
 	     }		 
 		loadImage(); //load the blank frame before we exit
-		
+		try {
+			matrix_.frame(frame_);
+		} catch (ConnectionLostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+    }
+	
+	//@Override  //need to fix this later, the music is still on when home is pressed, adding this causes a crash
+   // public void onStop() {
+	//	super.onStop();
+		    	
+	//	mediaPlayer.stop();
+		//mediaPlayer.release();
+   // }
+	
+	@Override
+    public void onDestroy() {
+		super.onDestroy();
 		resetTimer.cancel();  //if user closes the program, need to kill this timer or we'll get a crash
 		readoutTimer.cancel();
 		connectTimer.cancel();
     	
 		mediaPlayer.stop();
 		mediaPlayer.release();
-    	
-    	super.onDestroy();
     }
 	
+	 private void showToast(final String msg) {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Toast toast = Toast.makeText(eightball.this, msg, Toast.LENGTH_LONG);
+	                toast.show();
+				}
+			});
+		}  
 	
-	
-	@Override
-	protected void onStop() {
-		super.onStop();
-	}
-	
-	@Override
-	protected void onStart() {
-			super.onStart();
-	}
 
 }
