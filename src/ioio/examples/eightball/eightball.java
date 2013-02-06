@@ -107,20 +107,20 @@ public class eightball extends IOIOActivity {
 	
 	private SharedPreferences prefs;
 	private String OKText;
-	private short[] rgb_;
+	//private short[] rgb_;
 	
-	private Bitmap frame1;
+	//private Bitmap frame1;
 	private byte[] BitmapBytes;
 	private InputStream BitmapInputStream;
-	private ByteBuffer bBuffer;
-	private ShortBuffer sBuffer;
+	//private ByteBuffer bBuffer;
+	//private ShortBuffer sBuffer;
 	//private ShakeListener mSensorListener;
-	private SensorManager mSensorManager;
-	private Random randomGenerator = new Random();
+	//private SensorManager mSensorManager;
+	//private Random randomGenerator = new Random();
 	
 	private MediaPlayer mediaPlayer;
 	private AssetFileDescriptor intro1MP3;
-	private AssetFileDescriptor intro2MP3;
+	//private AssetFileDescriptor intro2MP3;
 	private AssetFileDescriptor transition1MP3;
 	private AssetFileDescriptor notReadyMP3;
 	
