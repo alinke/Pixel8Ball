@@ -1,7 +1,10 @@
 package ioio.examples.eightball;
 
-import ioio.lib.api.RgbLedMatrix;
-import ioio.lib.api.RgbLedMatrix.Matrix;
+
+//import ioio.lib.api.RgbLedMatrix; //cannot use here because of the naming conflict the graphics Matrix library, we'll declare it below via a full path
+//import ioio.lib.api.RgbLedMatrix.Matrix;
+import android.graphics.Matrix;
+import ioio.lib.api.IOIO.VersionType;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
@@ -28,7 +31,10 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.ImageFormat;
+import android.graphics.Bitmap.Config;
+import android.graphics.Paint;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PreviewCallback;
@@ -94,33 +100,29 @@ import android.widget.ViewFlipper;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-
+//import android.graphics.Matrix; //cannot use here because of the naming conflict
 import android.util.Log;
 import android.os.SystemClock;
 import android.os.Message;
 
+
 @SuppressLint("ParserError")
 public class eightball extends IOIOActivity {
 	private static final String LOG_TAG = "PixelEightball";	
-	private RgbLedMatrix.Matrix KIND; 
+	
+	private ioio.lib.api.RgbLedMatrix.Matrix KIND;  //have to do it this way because there is a matrix library conflict
+    private ioio.lib.api.RgbLedMatrix matrix_;
+
+	private android.graphics.Matrix matrix2;
 	private short[] frame_;
 	
 	private SharedPreferences prefs;
 	private String OKText;
-	//private short[] rgb_;
-	
-	//private Bitmap frame1;
 	private byte[] BitmapBytes;
 	private InputStream BitmapInputStream;
-	//private ByteBuffer bBuffer;
-	//private ShortBuffer sBuffer;
-	//private ShakeListener mSensorListener;
-	//private SensorManager mSensorManager;
-	//private Random randomGenerator = new Random();
 	
 	private MediaPlayer mediaPlayer;
 	private AssetFileDescriptor intro1MP3;
-	//private AssetFileDescriptor intro2MP3;
 	private AssetFileDescriptor transition1MP3;
 	private AssetFileDescriptor notReadyMP3;
 	
@@ -137,7 +139,25 @@ public class eightball extends IOIOActivity {
 	private int matrix_model;
 	private boolean debug_;
     private int appAlreadyStarted = 0;
-    private ioio.lib.api.RgbLedMatrix matrix_;
+    private Bitmap eightballMsgBitmap;
+    private Bitmap intro8BallBitmap;
+    private Bitmap eightball_;
+    private Bitmap a1_;
+    
+    public static final Bitmap.Config FAST_BITMAP_CONFIG = Bitmap.Config.RGB_565;
+  	private Bitmap canvasBitmap;
+  	private int width_original;
+  	private int height_original; 	  
+  	private float scaleWidth; 
+  	private float scaleHeight; 	  	
+  	private Bitmap resizedBitmap;  
+  	private Paint paint = new Paint(); 
+  	
+  	private static String pixelFirmware = "Not Found";
+	private static String pixelBootloader = "Not Found";
+	private static String pixelHardwareID = "Not Found";
+	private static String IOIOLibVersion = "Not Found";
+	private static VersionType v;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -146,6 +166,7 @@ public class eightball extends IOIOActivity {
 		setContentView(R.layout.main);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); //force only portrait mode	
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		
 		readoutTimer = new ReadOutTimer(2000, 1000); 
 		resetTimer = new ResetTimer(4000, 1000); 
 		connectTimer = new ConnectTimer(15000,5000); //pop up a message if it's not connected by this timer
@@ -169,18 +190,15 @@ public class eightball extends IOIOActivity {
 	        setPreferences();
 	        //***************************
 	        
-		 
-		 playIntro();
-		// loadImage();
-	 
+	      //Context context = getResources();
+	        
+	        paint.setAntiAlias(false);  
+		     paint.setDither(true);  
+		     paint.setFilterBitmap(false);  
+			
+		 playIntro(); //the magic 8 ball app music
 	
 	}
-	
-	 public static short byte2short(byte[] data, int i)
-	 {
-	    return (short)((data[i]<<8) | (data[i+1]));
-	 } 
-	
 	
 	public void StartButtonEvent(View view) { //go here for beer icon click
 		
@@ -196,7 +214,6 @@ public class eightball extends IOIOActivity {
 				
 				mediaPlayer.stop(); 
 				mediaPlayer.setLooping(false);
-		
 				
 				transition1MP3 = getResources().openRawResourceFd(R.raw.transition3); 
 				 
@@ -280,6 +297,9 @@ public class eightball extends IOIOActivity {
 		
 	 }
 	
+	
+	 
+	
 	public class ReadOutTimer extends CountDownTimer
 	{
 
@@ -301,177 +321,115 @@ public class eightball extends IOIOActivity {
 				 random = (int) Math.ceil(Math.random() * 24);		
 			}
 
-		    
-			if (matrix_model == 2 || matrix_model == 3) {
-				switch (random) {  //it's 32x32 matrix
+		    //now let's fire up our random number generator and pick which fortune message to display
+			
+			switch (random) {  
 			            case 1:
 			            	//Toast.makeText(getBaseContext(), "1", Toast.LENGTH_LONG).show();
-			            	 BitmapInputStream = getResources().openRawResource(R.raw.a1); //it is certain		            	
+			            	 //BitmapInputStream = getResources().openRawResource(R.raw.a1); //it is certain	
+			            	 eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a1);
 			            	break;
 			            case 2:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a2);  //decididely sod
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a2);  //decididely sod
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a2);
 			                break;
 			            case 3:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a3);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a3);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a3);
 			                break;
 			            case 4:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a4);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a4);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a4);
 			                break;	                
 			            case 5:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a5);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a5);		
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a5);
 			                break;    
 			            case 6:
-			            	 BitmapInputStream = getResources().openRawResource(R.raw.a6);			            	
+			            	 //BitmapInputStream = getResources().openRawResource(R.raw.a6);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a6);
 			            	break;
 			            case 7:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a7);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a7);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a7);
 			                break;
 			            case 8:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a8);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a8);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a8);
 			                break;
 			            case 9:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a9);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a9);		
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a9);
 			                break;	                
 			            case 10:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a10);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a10);		
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a10);
 			                break;    
 			            case 11:
-			            	 BitmapInputStream = getResources().openRawResource(R.raw.a11);			            	
+			            	 //BitmapInputStream = getResources().openRawResource(R.raw.a11);	
+			            	 eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a11);
 			            	break;
 			            case 12:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a12);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a12);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a12);
 			                break;
 			            case 13:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a13);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a13);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a13);
 			                break;
 			            case 14:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a14);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a14);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a14);
 			                break;	                
 			            case 15:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a15);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a15);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a15);
 			                break;    
 			            case 16:
-			            	 BitmapInputStream = getResources().openRawResource(R.raw.a16);			            	
+			            	// BitmapInputStream = getResources().openRawResource(R.raw.a16);	
+			            	 eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a16);
 			            	break;
 			            case 17:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a17);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a17);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a17);
 			                break;
 			            case 18:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a18);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a18);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a18);
 			                break;
 			            case 19:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a19);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a19);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a19);
 			                break;	                
 			            case 20:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a20);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a20);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a20);
 			                break;    
 			            case 21:
-			            	 BitmapInputStream = getResources().openRawResource(R.raw.a21);			            	
+			            	// BitmapInputStream = getResources().openRawResource(R.raw.a21);	
+			            	 eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a21);
 			            	break;
 			            case 22:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a22);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a22);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a22);
 			                break;
 			            case 23:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a23);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a23);	
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a23);
 			                break;
 			            case 24:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a24);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a24);
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a24);
 			                break;	                
 			            case 25:
-			            	BitmapInputStream = getResources().openRawResource(R.raw.a25);		
+			            	//BitmapInputStream = getResources().openRawResource(R.raw.a25);
+			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a25);
 			                break; 
-			      }		
-			}
-			else {  //it's a 32 x 16 matrix
-				switch (random) {
-	            case 1:
-	            	//Toast.makeText(getBaseContext(), "1", Toast.LENGTH_LONG).show();
-	            	 BitmapInputStream = getResources().openRawResource(R.raw.a); //it is certain		            	
-	            	break;
-	            case 2:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.b);  //decididely sod
-	                break;
-	            case 3:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.c);		
-	                break;
-	            case 4:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.d);		
-	                break;	                
-	            case 5:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.e);		
-	                break;    
-	            case 6:
-	            	 BitmapInputStream = getResources().openRawResource(R.raw.f);			            	
-	            	break;
-	            case 7:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.g);		
-	                break;
-	            case 8:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.h);		
-	                break;
-	            case 9:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.i);		
-	                break;	                
-	            case 10:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.j);		
-	                break;    
-	            case 11:
-	            	 BitmapInputStream = getResources().openRawResource(R.raw.k);			            	
-	            	break;
-	            case 12:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.l);		
-	                break;
-	            case 13:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.m);		
-	                break;
-	            case 14:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.n);		
-	                break;	                
-	            case 15:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.o);		
-	                break;    
-	            case 16:
-	            	 BitmapInputStream = getResources().openRawResource(R.raw.p);			            	
-	            	break;
-	            case 17:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.q);		
-	                break;
-	            case 18:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.r);		
-	                break;
-	            case 19:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.s);		
-	                break;	                
-	            case 20:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.t);		
-	                break;    
-	            case 21:
-	            	 BitmapInputStream = getResources().openRawResource(R.raw.u);			            	
-	            	break;
-	            case 22:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.v);		
-	                break;
-	            case 23:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.w);		
-	                break;
-	            case 24:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.x);		
-	                break;	                
-	            case 25:
-	            	BitmapInputStream = getResources().openRawResource(R.raw.y);		
-	                break; 
-	      }		
-	}
-		    
-			 loadImage();
-			 try {
-				matrix_.frame(frame_);
-			} catch (ConnectionLostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} //writes whatever is in bitmap raw 565 file buffer to the RGB LCD
-				
-			 resetTimer.start(); //wait four seconds and clear
+			      }	
+			
+			WriteImagetoMatrix(eightballMsgBitmap);
+			 
+			resetTimer.start(); //wait four seconds and clear
 					
 			}
 			
@@ -482,30 +440,58 @@ public class eightball extends IOIOActivity {
 		}
 	}	
 	
-	
-	
-	public void loadImage() {
-		try {
-			int n = BitmapInputStream.read(BitmapBytes, 0, BitmapBytes.length); // reads
-																				// the
-																				// input
-																				// stream
-																				// into
-																				// a
-																				// byte
-																				// array
-			Arrays.fill(BitmapBytes, n, BitmapBytes.length, (byte) 0);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	 private void WriteImagetoMatrix(Bitmap bitmap2Convert) {  //here we'll take a PNG, BMP, or whatever and convert it to RGB565 via a canvas, also we'll re-size the image if necessary
+	    //http://www.41post.com/4241/programming/android-disabling-anti-aliasing-for-pixel-art	
+		
+		 
+		 //let's test if the image is already in the resolution of our selected LED panel. If yes , we won't need to resize but if not, we'll need to scale it to the size of the selected panel
+		 width_original = bitmap2Convert.getWidth();
+		 height_original = bitmap2Convert.getHeight();
+		 
+		 //if not, no problem, we will re-size it on the fly here		 
+		 if (width_original != KIND.width || height_original != KIND.height) {
+			// resizedFlag = 1;
+			 scaleWidth = ((float) KIND.width) / width_original;
+   		 	 scaleHeight = ((float) KIND.height) / height_original;
+	   		 // create matrix for the manipulation
+	   		 matrix2 = new Matrix();
+	   		 // resize the bit map
+	   		 matrix2.postScale(scaleWidth, scaleHeight);
+	   		 resizedBitmap = Bitmap.createBitmap(bitmap2Convert, 0, 0, width_original, height_original, matrix2, false); //true would turn on anti-aliasing which we don't want
+	   		 canvasBitmap = Bitmap.createBitmap(KIND.width, KIND.height, Config.RGB_565); 
+	   		 Canvas canvas = new Canvas(canvasBitmap);
+	   		 canvas.drawRGB(0,0,0); //a black background
+	   	   	 canvas.drawBitmap(resizedBitmap, 0, 0, paint);
+	   		 ByteBuffer buffer = ByteBuffer.allocate(KIND.width * KIND.height *2); //Create a new buffer
+	   		 canvasBitmap.copyPixelsToBuffer(buffer); //copy the bitmap 565 to the buffer		
+	   		 BitmapBytes = buffer.array(); //copy the buffer into the type array
+		 }
+		 else {  //if we went here, then the image was already the correct dimension so no need to re-size
+			// resizedFlag = 0;
+			 canvasBitmap = Bitmap.createBitmap(KIND.width, KIND.height, Config.RGB_565); 
+	   		 Canvas canvas = new Canvas(canvasBitmap);
+	   	   	 canvas.drawBitmap(bitmap2Convert, 0, 0, paint);
+	   		 ByteBuffer buffer = ByteBuffer.allocate(KIND.width * KIND.height *2); //Create a new buffer
+	   		 canvasBitmap.copyPixelsToBuffer(buffer); //copy the bitmap 565 to the buffer		
+	   		 BitmapBytes = buffer.array(); //copy the buffer into the type array
+		 }	
+        
+		loadImage(); 
+		
+}
 
-		int y = 0;
-		for (int i = 0; i < frame_.length; i++) {
-			frame_[i] = (short) (((short) BitmapBytes[y] & 0xFF) | (((short) BitmapBytes[y + 1] & 0xFF) << 8));
-			y = y + 2;
-		}
+public void loadImage() {
+ 
 
-	}
+ 		int y = 0;
+ 		for (int i = 0; i < frame_.length; i++) {
+ 			frame_[i] = (short) (((short) BitmapBytes[y] & 0xFF) | (((short) BitmapBytes[y + 1] & 0xFF) << 8));
+ 			y = y + 2;
+ 		}
+ 		
+ 		//we're done with the images so let's recycle them to save memory
+	  //  canvasBitmap.recycle();
+ 	}
 	
 	 
 	   @Override
@@ -560,32 +546,69 @@ public class eightball extends IOIOActivity {
 	     debug_ = prefs.getBoolean("pref_debugMode", false);
 	     
 	     switch (matrix_model) {  //get this from the preferences
-	     
 	     case 0:
-	    	 KIND = Matrix.SEEEDSTUDIO_32x16;
-	    	 BitmapInputStream = getResources().openRawResource(R.raw.eightball2);
+	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x16; //kind tells us the led panel type
 	    	 break;
 	     case 1:
-	    	 KIND = Matrix.ADAFRUIT_32x16;
-	    	 BitmapInputStream = getResources().openRawResource(R.raw.eightball2);
+	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_32x16;
 	    	 break;
 	     case 2:
-	    	 KIND = Matrix.SEEEDSTUDIO_32x32_NEW; //v1
-	    	 BitmapInputStream = getResources().openRawResource(R.raw.eightball2a);
+	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32_NEW; 
 	    	 break;
 	     case 3:
-	    	 KIND = Matrix.SEEEDSTUDIO_32x32; //v2
-	    	 BitmapInputStream = getResources().openRawResource(R.raw.eightball2a);
+	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32; 
 	    	 break;
+	     case 4:
+	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_64x32; 
+	    	 break;
+	     case 5:
+	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x64; 
+	    	 break;	 
+	     case 6:
+	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_2_MIRRORED; 
+	    	 break;	 	 
+	     case 7:
+	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_4_MIRRORED;
+	    	 break;
+	     case 8:
+	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_128x32; 
+	    	 break;	 
+	     case 9:
+	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x128; 
+	    	 break;	 
+	     case 10:
+	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_64x64;
+	    	 break;	 	 		 
 	     default:	    		 
-	    	 KIND = Matrix.SEEEDSTUDIO_32x32; //v2 as the default
-	    	 BitmapInputStream = getResources().openRawResource(R.raw.eightball2a);
+	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32; 
 	     }
 	     
+	  
+	     
+	    
+		// a1_ = BitmapFactory.decodeResource(getResources(), R.drawable.a1); 
+
+	     
 	     frame_ = new short [KIND.width * KIND.height];
-		 BitmapBytes = new byte[KIND.width * KIND.height *2]; //512 * 2 = 1024 or 1024 * 2 = 2048
+		 BitmapBytes = new byte[KIND.width * KIND.height *2]; 
 		 
-		 loadImage();
+		 eightball_ = BitmapFactory.decodeResource(getResources(), R.drawable.eightball); 
+		// BitmapInputStream = getResources().openRawResource(R.raw.eightball32);	
+		 
+		 //loadImage();
+		// Bitmap bitmap = Bitmap.createBitmap(32, 32, Bitmap.Config.RGB_565);
+		// ByteBuffer buffer = ByteBuffer.wrap(data);
+		// bitmap.copyPixelsFromBuffer(buffer);
+		 
+		 WriteImagetoMatrix(eightball_);
+	  
+		
+		/*	try {
+				WriteImagetoMatrix(eightball_);
+			} catch (ConnectionLostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
 	 }
 	
 	public class ResetTimer extends CountDownTimer
@@ -600,7 +623,11 @@ public class eightball extends IOIOActivity {
 			public void onFinish()
 				{						
 				 //we've finished showing the message so let's go back to the original 8 ball graphic and play the starting sound	
-				if (matrix_model == 0 || matrix_model == 1) {
+				
+				 WriteImagetoMatrix(eightball_);
+				
+				
+				/*if (matrix_model == 0 || matrix_model == 1) {
 					BitmapInputStream = getResources().openRawResource(R.raw.eightball2); //it's 16x32
 				}
 				else {
@@ -614,7 +641,7 @@ public class eightball extends IOIOActivity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} //writes whatever is in bitmap raw 565 file buffer to the RGB LCD
-					
+*/					
 				 playIntro();
 				 readyFlag = 1;
 				}
@@ -693,6 +720,7 @@ public class eightball extends IOIOActivity {
 		AlertDialog.Builder alert=new AlertDialog.Builder(this);
 		alert.setTitle("Not Found").setIcon(R.drawable.icon).setMessage("Please ensure Bluetooth pairing has been completed prior. The Bluetooth pairing code is: 4545.").setNeutralButton("OK", null).show();	
 }
+	
 
 	class IOIOThread extends BaseIOIOLooper {
 		//private RgbLedMatrix matrix_;
@@ -703,11 +731,21 @@ public class eightball extends IOIOActivity {
 			deviceFound = 1; //if we went here, then we are connected over bluetooth or USB
 			connectTimer.cancel(); //we can stop this since it was found
 			
-			matrix_.frame(frame_);  //write eightball image to the matrix
+			//matrix_.frame(frame_);  //write eightball image to the matrix
   			
   			if (debug_ == true) {  			
 	  			showToast("Bluetooth Connected");
   			}
+  			
+  		//**** let's get IOIO version info for the About Screen ****
+  			pixelFirmware = ioio_.getImplVersion(v.APP_FIRMWARE_VER);
+  			pixelBootloader = ioio_.getImplVersion(v.BOOTLOADER_VER);
+  			pixelHardwareID = ioio_.getImplVersion(v.HARDWARE_VER); 
+  			//pixelHardwareID = ioio_.getImplVersion(v.APP_FIRMWARE_VER).substring(0,4); //quick hack, fix later
+  			IOIOLibVersion = ioio_.getImplVersion(v.IOIOLIB_VER);
+  			//**********************************************************
+  			
+  		
   			
   			//if (appAlreadyStarted == 1) {  //this means we were already running and had a IOIO disconnect so show let's show what was in the matrix
   				//WriteImagetoMatrix();
@@ -719,7 +757,7 @@ public class eightball extends IOIOActivity {
 		@Override
 		public void loop() throws ConnectionLostException {
 		
-			//matrix_.frame(frame_); //writes whatever is in bitmap raw 565 file buffer to the RGB LCD
+			matrix_.frame(frame_); //writes whatever is in bitmap raw 565 file buffer to the RGB LCD
 					
 			}	
 		
@@ -750,7 +788,7 @@ public class eightball extends IOIOActivity {
 	@Override
     public void onPause() {
 		super.onPause();
-		 switch (matrix_model) {  //get this from the preferences
+		/* switch (matrix_model) {  //get this from the preferences
 	     case 0:
 	    	 BitmapInputStream = getResources().openRawResource(R.raw.blank16);	
 	    	 break;
@@ -772,7 +810,7 @@ public class eightball extends IOIOActivity {
 		} catch (ConnectionLostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		}		*/
     }
 	
 	//@Override  //need to fix this later, the music is still on when home is pressed, adding this causes a crash
