@@ -19,8 +19,8 @@
    <string name="OKText">OK</string>   
    
     <string name="selected_matrix">selected_matrix</string>
-    <string name="matrix">LED Panel Selection</string>
-    <string name="matrixSummary">Select your LED Panel Model</string>    
+    <string name="matrix">PIXEL Model</string>
+    <string name="matrixSummary">Select your PIXEL Model/LED Panel Model</string>    
     <string name="dialogTitleMatrix">LED Panel Selection</string>
     <string name="matrix_default_value">3</string>
     
@@ -29,6 +29,16 @@
     <string name="pref_debugModeDefault">false</string>    
     <string name="debugModeSummary">Displays debug messages, use to see how often the Bluetooth connections are getting disconnected and connected as well as other debug messages</string>
     
+     <string name="BootloaderVersionString">Bootloader Version</string> 
+    <string name="FirmwareVersionString">Firmware Version</string> 
+    <string name="LibraryVersionString">Library Version</string> 
+    <string name="HardwareVersionString">Hardware Version</string> 
+   
+    
+    <string name="AutoSelectPanel">Auto Select PIXEL / LED Panel</string>    
+    <string name="pref_AutoSelectPanel">pref_AutoSelectPanel</string>
+    <string name="pref_AutoSelectPanelDefault">true</string>
+    <string name="AutoSelectPanelSummary">Turn this off if you want to manually select the LED panel</string>
    
     
     <string name="bluetooth_pair">Blueooth Pairing</string>

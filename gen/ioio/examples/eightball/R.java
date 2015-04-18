@@ -141,10 +141,16 @@ public final class R {
         public static final int y=0x7f05003e;
     }
     public static final class string {
+        public static final int AutoSelectPanel=0x7f070019;
+        public static final int AutoSelectPanelSummary=0x7f07001c;
+        public static final int BootloaderVersionString=0x7f070015;
+        public static final int FirmwareVersionString=0x7f070016;
+        public static final int HardwareVersionString=0x7f070018;
+        public static final int LibraryVersionString=0x7f070017;
         public static final int OKText=0x7f07000b;
         public static final int app_name=0x7f070001;
-        public static final int bluetooth_pair=0x7f070015;
-        public static final int bluetooth_pairSummary=0x7f070016;
+        public static final int bluetooth_pair=0x7f07001d;
+        public static final int bluetooth_pairSummary=0x7f07001e;
         public static final int debugMode=0x7f070011;
         public static final int debugModeSummary=0x7f070014;
         public static final int dialogTitleMatrix=0x7f07000f;
@@ -157,6 +163,8 @@ public final class R {
         public static final int menu_prefs_title=0x7f070009;
         public static final int prefSummary=0x7f07000a;
         public static final int prefTitle=0x7f070008;
+        public static final int pref_AutoSelectPanel=0x7f07001a;
+        public static final int pref_AutoSelectPanelDefault=0x7f07001b;
         public static final int pref_debugMode=0x7f070012;
         public static final int pref_debugModeDefault=0x7f070013;
         public static final int pref_r=0x7f070004;

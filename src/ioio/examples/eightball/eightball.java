@@ -11,6 +11,7 @@ import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOActivity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,7 +27,6 @@ import android.view.MenuItem;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.view.MenuInflater;
-
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -76,7 +76,10 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.widget.ProgressBar;
+
 import java.lang.Math;
+
+
 
 //import android.app.AlertDialog;
 //import android.content.Context;
@@ -159,6 +162,8 @@ public class eightball extends IOIOActivity {
 	private static String IOIOLibVersion = "Not Found";
 	private static VersionType v;
 	
+	private boolean AutoSelectPanel_ = true;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -192,7 +197,7 @@ public class eightball extends IOIOActivity {
 	        
 	      //Context context = getResources();
 	        
-	        paint.setAntiAlias(false);  
+	         paint.setAntiAlias(false);  
 		     paint.setDither(true);  
 		     paint.setFilterBitmap(false);  
 			
@@ -255,8 +260,6 @@ public class eightball extends IOIOActivity {
 		
 		else { //play not ready sound
 			
-			//mediaPlayer.stop(); 
-			//mediaPlayer.setLooping(false);
 			
 			notReadyMP3 = getResources().openRawResourceFd(R.raw.notready); 
 			 
@@ -297,9 +300,6 @@ public class eightball extends IOIOActivity {
 		
 	 }
 	
-	
-	 
-	
 	public class ReadOutTimer extends CountDownTimer
 	{
 
@@ -325,104 +325,78 @@ public class eightball extends IOIOActivity {
 			
 			switch (random) {  
 			            case 1:
-			            	//Toast.makeText(getBaseContext(), "1", Toast.LENGTH_LONG).show();
-			            	 //BitmapInputStream = getResources().openRawResource(R.raw.a1); //it is certain	
 			            	 eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a1);
 			            	break;
 			            case 2:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a2);  //decididely sod
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a2);
 			                break;
 			            case 3:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a3);	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a3);
 			                break;
 			            case 4:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a4);	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a4);
 			                break;	                
 			            case 5:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a5);		
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a5);
 			                break;    
 			            case 6:
-			            	 //BitmapInputStream = getResources().openRawResource(R.raw.a6);	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a6);
 			            	break;
 			            case 7:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a7);	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a7);
 			                break;
 			            case 8:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a8);	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a8);
 			                break;
-			            case 9:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a9);		
+			            case 9:	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a9);
 			                break;	                
 			            case 10:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a10);		
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a10);
 			                break;    
 			            case 11:
-			            	 //BitmapInputStream = getResources().openRawResource(R.raw.a11);	
 			            	 eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a11);
 			            	break;
 			            case 12:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a12);	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a12);
 			                break;
 			            case 13:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a13);	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a13);
 			                break;
 			            case 14:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a14);	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a14);
 			                break;	                
-			            case 15:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a15);	
+			            case 15:	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a15);
 			                break;    
 			            case 16:
-			            	// BitmapInputStream = getResources().openRawResource(R.raw.a16);	
 			            	 eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a16);
 			            	break;
-			            case 17:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a17);	
+			            case 17:	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a17);
 			                break;
 			            case 18:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a18);	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a18);
 			                break;
 			            case 19:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a19);	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a19);
 			                break;	                
 			            case 20:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a20);	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a20);
 			                break;    
 			            case 21:
-			            	// BitmapInputStream = getResources().openRawResource(R.raw.a21);	
 			            	 eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a21);
 			            	break;
 			            case 22:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a22);	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a22);
 			                break;
 			            case 23:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a23);	
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a23);
 			                break;
 			            case 24:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a24);
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a24);
 			                break;	                
 			            case 25:
-			            	//BitmapInputStream = getResources().openRawResource(R.raw.a25);
 			            	eightballMsgBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.a25);
 			                break; 
 			      }	
@@ -507,10 +481,14 @@ public void loadImage() {
 	    {
 	       
 				  
-		  if (item.getItemId() == R.id.menu_about) {
+    	 if (item.getItemId() == R.id.menu_about) {
 			  
 			    AlertDialog.Builder alert=new AlertDialog.Builder(this);
-		      	alert.setTitle(getString(R.string.menu_about_title)).setIcon(R.drawable.icon).setMessage(getString(R.string.menu_about_summary) + "\n\n" + getString(R.string.versionString) + " " + app_ver).setNeutralButton(OKText, null).show();	
+		      	alert.setTitle(getString(R.string.menu_about_title)).setIcon(R.drawable.icon).setMessage(getString(R.string.menu_about_summary) + "\n\n" + getString(R.string.versionString) + " " + app_ver + "\n"
+		      			+ getString(R.string.FirmwareVersionString) + " " + pixelFirmware + "\n"
+		      			+ getString(R.string.HardwareVersionString) + " " + pixelHardwareID + "\n"
+		      			+ getString(R.string.BootloaderVersionString) + " " + pixelBootloader + "\n"
+		      			+ getString(R.string.LibraryVersionString) + " " + IOIOLibVersion).setNeutralButton(getResources().getString(R.string.OKText), null).show();	
 		   }
 	    	
 	    	if (item.getItemId() == R.id.menu_prefs)
@@ -544,61 +522,112 @@ public void loadImage() {
 	    	        resources.getString(R.string.matrix_default_value))); 
 	     
 	     debug_ = prefs.getBoolean("pref_debugMode", false);
+	     AutoSelectPanel_ = prefs.getBoolean("pref_AutoSelectPanel", true);
 	     
-	     switch (matrix_model) {  //get this from the preferences
-	     case 0:
-	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x16; //kind tells us the led panel type
-	    	 break;
-	     case 1:
-	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_32x16;
-	    	 break;
-	     case 2:
-	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32_NEW; 
-	    	 break;
-	     case 3:
-	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32; 
-	    	 break;
-	     case 4:
-	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_64x32; 
-	    	 break;
-	     case 5:
-	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x64; 
-	    	 break;	 
-	     case 6:
-	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_2_MIRRORED; 
-	    	 break;	 	 
-	     case 7:
-	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_4_MIRRORED;
-	    	 break;
-	     case 8:
-	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_128x32; 
-	    	 break;	 
-	     case 9:
-	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x128; 
-	    	 break;	 
-	     case 10:
-	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_64x64;
-	    	 break;	 	 		 
-	     default:	    		 
-	    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32; 
-	     }
-	     
+	     if (AutoSelectPanel_ && pixelHardwareID.substring(0,4).equals("PIXL") && !pixelFirmware.substring(4,5).equals("0")) { // PIXL0008 or PIXL0009 is the normal so if it's just a 0 for the 5th character, then we don't go here
+		    	
+	    	 	//let's first check if we have a matching firmware to auto-select and if not, we'll just go what the matrix from preferences
+		  
+		  		if (pixelHardwareID.substring(4,5).equals("Q")) {
+	    	 		matrix_model = 11;
+	    	 		KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_32x32;
+	    	 	}
+	    	 	else if (pixelHardwareID.substring(4,5).equals("T")) {
+	    	 		matrix_model = 14;
+	    	 		KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_64x64;
+	    	 	}
+	    	 	else if (pixelHardwareID.substring(4,5).equals("I")) {
+	    	 		matrix_model = 1; 
+	    	 		KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_32x16;
+	    	 	}
+	    	 	else if (pixelHardwareID.substring(4,5).equals("L")) { //low power
+	    	 		matrix_model = 1; 
+	    	 		KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_32x16;
+	    	 	}
+	    	 	else if (pixelHardwareID.substring(4,5).equals("C")) {
+	    	 		matrix_model = 12; 
+	    	 		KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_32x32_ColorSwap;
+	    	 	}
+	    	 	else if (pixelHardwareID.substring(4,5).equals("R")) {
+	    	 		matrix_model = 13; 
+	    	 		KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_64x32;
+	    	 	}
+	    	 	else if (pixelHardwareID.substring(4,5).equals("M")) { //low power
+	    	 		 matrix_model = 3;
+	    	 		 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32; 
+	    	 	}
+	    	 	else if (pixelHardwareID.substring(4,5).equals("N")) { //low power
+	    	 		 matrix_model = 11;
+	    	 		 KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_32x32; 
+	    	 	}
+	    	 	else {  //in theory, we should never go here
+	    	 		KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_32x32;
+	    	 	}
+	  		}	
 	  
-	     
-	    
-		// a1_ = BitmapFactory.decodeResource(getResources(), R.drawable.a1); 
-
+	       else {
+		     switch (matrix_model) {  //get this from the preferences
+			     case 0:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x16;
+			    	 break;
+			     case 1:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_32x16;
+			    	 break;
+			     case 2:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32_NEW; 
+			    	 break;
+			     case 3:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32; 
+			    	 break;
+			     case 4:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_64x32; 
+			    	 break;
+			     case 5:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x64; 
+			    	 break;	 
+			     case 6:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_2_MIRRORED; 
+			    	 break;	 	 
+			     case 7: //this one doesn't work and we don't use it rigth now
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_4_MIRRORED;
+			    	 break;
+			     case 8:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_128x32; 
+			    	 break;	 
+			     case 9:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x128; //vertical mount
+			    	 break;	 
+			     case 10:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_64x64;
+			    	 break;
+			     case 11:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_32x32;
+			    	 break;	 
+			     case 12:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_32x32_ColorSwap;
+			    	 break;	 	 
+			     case 13:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_64x32;
+			    	 break;	
+			     case 14:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_64x64;
+			    	 break;
+			     case 15:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_128x32;
+			    	 break;	 	 	
+			     case 16:
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.ADAFRUIT_32x128;
+			    	 break;	 	 	
+			     default:	    		 
+			    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32; //v2 as the default
+			     }
+	    	 }
 	     
 	     frame_ = new short [KIND.width * KIND.height];
 		 BitmapBytes = new byte[KIND.width * KIND.height *2]; 
 		 
 		 eightball_ = BitmapFactory.decodeResource(getResources(), R.drawable.eightball); 
-		// BitmapInputStream = getResources().openRawResource(R.raw.eightball32);	
-		 
-		 //loadImage();
-		// Bitmap bitmap = Bitmap.createBitmap(32, 32, Bitmap.Config.RGB_565);
-		// ByteBuffer buffer = ByteBuffer.wrap(data);
-		// bitmap.copyPixelsFromBuffer(buffer);
+		
 		 
 		 WriteImagetoMatrix(eightball_);
 	  
@@ -727,7 +756,7 @@ public void loadImage() {
 
 		@Override
 		protected void setup() throws ConnectionLostException {
-			matrix_ = ioio_.openRgbLedMatrix(KIND);
+			//matrix_ = ioio_.openRgbLedMatrix(KIND);
 			deviceFound = 1; //if we went here, then we are connected over bluetooth or USB
 			connectTimer.cancel(); //we can stop this since it was found
 			
@@ -736,6 +765,35 @@ public void loadImage() {
   			if (debug_ == true) {  			
 	  			showToast("Bluetooth Connected");
   			}
+  			
+  		  if (AutoSelectPanel_ && pixelHardwareID.substring(0,4).equals("PIXL") && !pixelHardwareID.substring(4,5).equals("0")) { //only go here if we have a firmware that is set to auto-detect, otherwise we can skip this
+	  			runOnUiThread(new Runnable() 
+	  			{
+	  			   public void run() 
+	  			   {
+	  				   //updatePrefs();
+	  				   setPreferences();
+	  				   
+	  				   try {
+	  					 matrix_ = ioio_.openRgbLedMatrix(KIND);
+	 	  	  		    // matrix_.frame(frame_); //stream "select image" text to PIXEL
+					} catch (ConnectionLostException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	  			      
+	  			   }
+	  			}); 
+			}
+		   
+		   else { //we didn't auto-detect so just go the normal way
+			  matrix_ = ioio_.openRgbLedMatrix(KIND);
+	  		 // matrix_.frame(frame_); //stream "select image" text to PIXEL
+		   }
+  			
+  			
+  			
+  			
   			
   		//**** let's get IOIO version info for the About Screen ****
   			pixelFirmware = ioio_.getImplVersion(v.APP_FIRMWARE_VER);

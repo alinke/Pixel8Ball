@@ -116,10 +116,16 @@ int raw v 0x7f05003b
 int raw w 0x7f05003c
 int raw x 0x7f05003d
 int raw y 0x7f05003e
+int string AutoSelectPanel 0x7f070019
+int string AutoSelectPanelSummary 0x7f07001c
+int string BootloaderVersionString 0x7f070015
+int string FirmwareVersionString 0x7f070016
+int string HardwareVersionString 0x7f070018
+int string LibraryVersionString 0x7f070017
 int string OKText 0x7f07000b
 int string app_name 0x7f070001
-int string bluetooth_pair 0x7f070015
-int string bluetooth_pairSummary 0x7f070016
+int string bluetooth_pair 0x7f07001d
+int string bluetooth_pairSummary 0x7f07001e
 int string debugMode 0x7f070011
 int string debugModeSummary 0x7f070014
 int string dialogTitleMatrix 0x7f07000f
@@ -132,6 +138,8 @@ int string menu_about_title 0x7f070005
 int string menu_prefs_title 0x7f070009
 int string prefSummary 0x7f07000a
 int string prefTitle 0x7f070008
+int string pref_AutoSelectPanel 0x7f07001a
+int string pref_AutoSelectPanelDefault 0x7f07001b
 int string pref_debugMode 0x7f070012
 int string pref_debugModeDefault 0x7f070013
 int string pref_r 0x7f070004
